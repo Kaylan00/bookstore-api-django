@@ -40,7 +40,7 @@ Siga estas instruções para obter uma cópia do projeto e executá-la em sua m�
 
 1.  **Clone o repositório:**
     ```bash
-    git clone [https://github.com/Kaylan00/bookstore-api-django.git](https://github.com/Kaylan00/bookstore-api-django.git)
+    git clone https://github.com/Kaylan00/bookstore-api-django.git
     cd bookstore-api-django
     ```
 
