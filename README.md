@@ -28,33 +28,29 @@ Este projeto é uma API completa de livraria que permite aos usuários navegar p
 
 ## Como Iniciar o Projeto
 
-Siga estas instruções para obter uma cópia do projeto e executá-la em sua máquina local para desenvolvimento e testes.
+Você pode rodar este projeto de duas maneiras: usando Docker (método recomendado e mais simples) ou configurando o ambiente manualmente em sua máquina.
 
-### Pré-requisitos
+### Método 1: Com Docker (Recomendado)
 
+**Pré-requisitos:**
 -   [Git](https://git-scm.com/)
 -   [Docker](https://www.docker.com/products/docker-desktop/)
 -   [Docker Compose](https://docs.docker.com/compose/)
 
-### Instalação
-
+**Instalação:**
 1.  **Clone o repositório:**
     ```bash
-    git clone https://github.com/Kaylan00/bookstore-api-django.git
+    git clone [https://github.com/Kaylan00/bookstore-api-django.git](https://github.com/Kaylan00/bookstore-api-django.git)
     cd bookstore-api-django
     ```
 
-2.  **Crie o arquivo de ambiente:**
-    Crie um arquivo chamado `.env` na raiz do projeto e cole o seguinte conteúdo. Estas variáveis são usadas pelo `docker-compose.yml` para configurar os serviços.
-
+2.  **Crie o arquivo de ambiente (`.env`):**
+    Crie um arquivo chamado `.env` na raiz do projeto e cole o seguinte conteúdo:
     ```ini
     # .env
-    # Variáveis do Banco de Dados PostgreSQL
     POSTGRES_DB=bookstore
     POSTGRES_USER=user
     POSTGRES_PASSWORD=password
-
-    # Variáveis da Aplicação Django
     DB_NAME=bookstore
     DB_USER=user
     DB_PASSWORD=password
@@ -62,31 +58,83 @@ Siga estas instruções para obter uma cópia do projeto e executá-la em sua m�
     DB_PORT=5432
     ```
 
-3.  **Construa e execute os serviços com o Docker Compose:**
-    Este comando irá construir a imagem Docker para a aplicação Django e iniciar todos os containers necessários em segundo plano.
+3.  **Construa e execute os containers:**
     ```bash
     docker-compose up -d --build
     ```
 
 4.  **Aplique as migrações do banco de dados:**
-    Este comando cria todas as tabelas necessárias no banco de dados de acordo com os modelos do Django.
     ```bash
     docker-compose exec app python manage.py migrate
     ```
 
 5.  **Crie um superusuário:**
-    Isso permitirá que você acesse o painel de Administração do Django. Siga as instruções no terminal para criar sua conta de administrador.
     ```bash
     docker-compose exec app python manage.py createsuperuser
     ```
 
+### Método 2: Manualmente (Sem Docker)
+
+**Pré-requisitos:**
+-   [Git](https://git-scm.com/)
+-   Python 3.11+
+-   PostgreSQL instalado e rodando na sua máquina.
+
+**Instalação:**
+1.  **Clone o repositório:**
+    ```bash
+    git clone [https://github.com/Kaylan00/bookstore-api-django.git](https://github.com/Kaylan00/bookstore-api-django.git)
+    cd bookstore-api-django
+    ```
+
+2.  **Configure o Banco de Dados PostgreSQL:**
+    Você precisará criar um banco de dados e um usuário no seu PostgreSQL local. Usando `psql`, os comandos seriam parecidos com estes:
+    ```sql
+    CREATE DATABASE bookstore;
+    CREATE USER user WITH PASSWORD 'password';
+    GRANT ALL PRIVILEGES ON DATABASE bookstore TO user;
+    ```
+
+3.  **Crie e ative um ambiente virtual Python:**
+    ```bash
+    python3 -m venv venv
+    source venv/bin/activate  # No Linux/macOS
+    # venv\Scripts\activate   # No Windows
+    ```
+
+4.  **Instale as dependências:**
+    ```bash
+    pip install -r requirements.txt
+    ```
+
+5.  **Crie e configure o arquivo de ambiente (`.env`):**
+    Crie o arquivo `.env` e **lembre-se de alterar o `DB_HOST` para `localhost`**, pois o banco de dados está rodando na sua própria máquina.
+    ```ini
+    # .env
+    POSTGRES_DB=bookstore
+    POSTGRES_USER=user
+    POSTGRES_PASSWORD=password
+    DB_NAME=bookstore
+    DB_USER=user
+    DB_PASSWORD=password
+    DB_HOST=localhost # <-- MUDANÇA IMPORTANTE
+    DB_PORT=5432
+    ```
+    *Para que o Django leia este arquivo fora do Docker, você precisará carregar essas variáveis no seu terminal antes de iniciar o servidor, por exemplo, com o comando `export $(cat .env | xargs)`.*
+
+6.  **Execute os comandos do Django:**
+    ```bash
+    python manage.py migrate
+    python manage.py createsuperuser
+    python manage.py runserver
+    ```
 ### Executando a Aplicação
 
 A aplicação agora deve estar rodando em `http://localhost:8000`.
 
 -   **Admin do Django:** `http://localhost:8000/admin/`
--   **Raiz da API:** `http://localhost:8000/api/`
--   **Documentação da API (Swagger UI):** `http://localhost:8000/api/docs/`
+-   **Raiz da API:** `http://localhost:8000/`
+-   **Documentação da API (Swagger UI):** `http://localhost:8000/swagger`
 
 ## Principais Endpoints da API
 
