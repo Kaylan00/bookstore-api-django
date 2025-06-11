@@ -1,10 +1,14 @@
-from rest_framework import viewsets 
+from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, permissions
 from .permissions import IsOwnerOrReadOnly
-from ..models import Book, Author, Genre, Review 
-from .serializers import BookSerializer, AuthorSerializer, GenreSerializer, ReviewSerializer 
+from ..models import Book, Author, Genre, Review
+from .serializers import BookSerializer, AuthorSerializer, GenreSerializer, ReviewSerializer
 from .filters import BookFilter
 
 class BookViewSet(viewsets.ModelViewSet):
+    """
+    Endpoint da API que permite que os livros sejam vistos ou editados.
+    """
     queryset = Book.objects.all().order_by('-created_at')
     serializer_class = BookSerializer
     permission_classes = [IsOwnerOrReadOnly]
@@ -22,9 +26,15 @@ class GenreViewSet(viewsets.ModelViewSet):
     serializer_class = GenreSerializer
 
 class ReviewViewSet(viewsets.ModelViewSet):
-    queryset = Review.objects.all()
+    """
+    Endpoint da API para reviews, aninhado sob os livros.
+    """
     serializer_class = ReviewSerializer
     permission_classes = [IsOwnerOrReadOnly]
 
+    def get_queryset(self):
+        return Review.objects.filter(book_id=self.kwargs['book_pk'])
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        book = get_object_or_404(Book, pk=self.kwargs['book_pk'])
+        serializer.save(user=self.request.user, book=book)
